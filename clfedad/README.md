@@ -24,9 +24,13 @@ cd clfedad
 ### 2. Instalar dependencias
 
 ```bash
-composer install --no-dev
 npm install
+```
+```bash
 npm run build
+```
+```bash
+composer install --no-dev --optimize-autoloader
 ```
 
 ### 3. Configurar la base de datos
@@ -62,7 +66,9 @@ CREATE DATABASE clfedad;
 ```bash
 php artisan migrate
 ```
-
+```bash
+php artisan key:generate
+```
 
 ## Ejecutar la aplicación
 
