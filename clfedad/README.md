@@ -24,24 +24,12 @@ cd clfedad
 ### 2. Instalar dependencias
 
 ```bash
-composer install
+composer install --no-dev
 npm install
+npm run build
 ```
 
-### 3. Configuración del entorno
-
-```bash
-# Copiar el archivo de configuración
-copy .env.example .env
-```
-
-### 4. Generar la clave de la aplicación
-
-```bash
-php artisan key:generate
-```
-
-### 5. Configurar la base de datos
+### 3. Configurar la base de datos
 
 Edita el archivo `.env` con la configuración de tu base de datos PostgreSQL:
 
@@ -54,7 +42,7 @@ DB_USERNAME=tu_usuario
 DB_PASSWORD=tu_contraseña
 ```
 
-### 6. Crear la base de datos
+### 4. Crear la base de datos
 
 Crea una base de datos PostgreSQL con el nombre configurado:
 
@@ -75,11 +63,6 @@ CREATE DATABASE clfedad;
 php artisan migrate
 ```
 
-### 8. Compilar activos (si aplica)
-
-```bash
-npm run dev
-```
 
 ## Ejecutar la aplicación
 
@@ -91,11 +74,6 @@ php artisan serve
 
 La aplicación estará disponible en: `http://localhost:8000`
 
-### Compilación para producción (opcional)
-
-```bash
-npm run build
-```
 
 ## Estructura del proyecto
 
@@ -121,6 +99,3 @@ El proyecto incluye una tabla `edad_registros` para almacenar:
 - Clasificación asignada
 - Dirección IP del usuario (opcional)
 
-## Licencia
-
-MIT
