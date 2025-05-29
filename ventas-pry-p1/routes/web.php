@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
  * Rutas públicas
  */
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 /**

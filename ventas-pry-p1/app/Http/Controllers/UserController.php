@@ -39,9 +39,18 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:users',
+                'regex:/^[a-zA-Z0-9._%+-]+@barespe\.com$/'
+            ],
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string|exists:roles,name',
+        ], [
+            'email.regex' => 'El correo electrónico debe tener el dominio @barespe.com'
         ]);
 
         if (!$this->canAssignRole($request->role)) {
@@ -88,14 +97,29 @@ class UserController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($user->id),
+                'regex:/^[a-zA-Z0-9._%+-]+@barespe\.com$/'
+            ],
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|string|exists:roles,name',
+        ], [
+            'email.regex' => 'El correo electrónico debe tener el dominio @barespe.com'
         ]);
 
         // Verificar si puede asignar el nuevo rol
         if (!$this->canAssignRole($request->role)) {
             return back()->withErrors(['role' => 'No tienes permisos para asignar este rol']);
+        }
+
+        //No permitir que usuarios cambien su propio rol
+        $currentRole = $user->roles->first()?->name;
+        if ($user->id === auth()->id() && $currentRole !== $request->role) {
+            return back()->withErrors(['role' => 'No puedes cambiar tu propio rol']);
         }
 
         // Actualizar datos básicos
@@ -112,7 +136,6 @@ class UserController extends Controller
         $user->update($userData);
 
         // Actualizar rol si cambió
-        $currentRole = $user->roles->first()?->name;
         if ($currentRole !== $request->role) {
             $user->syncRoles([$request->role]);
         }

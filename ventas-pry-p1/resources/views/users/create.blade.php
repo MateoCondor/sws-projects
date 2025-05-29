@@ -48,10 +48,16 @@
                                    id="email" 
                                    value="{{ old('email') }}" 
                                    required
+                                   pattern="[a-zA-Z0-9._%+-]+@barespe\.com"
+                                   placeholder="usuario@barespe.com"
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('email')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
+                            <p class="mt-1 text-sm text-gray-500">
+                                <i class="fas fa-info-circle"></i>
+                                Solo se permiten correos con dominio @barespe.com
+                            </p>
                         </div>
 
                         {{-- Contraseña --}}
@@ -114,4 +120,35 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email');
+            
+            emailInput.addEventListener('input', function() {
+                const email = this.value;
+                const isValid = /^[a-zA-Z0-9._%+-]+@barespe\.com$/.test(email);
+                
+                if (email && !isValid) {
+                    this.setCustomValidity('El correo debe tener el dominio @barespe.com');
+                    this.classList.add('border-red-500');
+                    this.classList.remove('border-gray-300');
+                } else {
+                    this.setCustomValidity('');
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-gray-300');
+                }
+            });
+            
+            // Auto-completar dominio cuando el usuario escribe @
+            emailInput.addEventListener('keyup', function() {
+                const value = this.value;
+                if (value.endsWith('@') && !value.includes('@barespe.com')) {
+                    this.value = value + 'barespe.com';
+                    // Posicionar cursor antes del dominio
+                    const position = value.length;
+                    this.setSelectionRange(position, position);
+                }
+            });
+        });
+    </script>
 </x-app-layout>

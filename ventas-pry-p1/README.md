@@ -69,7 +69,7 @@ npm install
 
 ```bash
 # Copiar el archivo de configuración
-cp .env.example .env
+copy .env.example .env
 
 # Generar la clave de aplicación
 php artisan key:generate
@@ -80,7 +80,7 @@ php artisan key:generate
 Editar el archivo `.env` con los datos de tu base de datos:
 
 ```env
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=ventas_pry_p1
@@ -88,7 +88,7 @@ DB_USERNAME=tu_usuario
 DB_PASSWORD=tu_contraseña
 ```
 
-### 6. Ejecutar Migraciones y Seeders
+### 6. Ejecutar Migraciones y Seeders (Importante)
 
 ```bash
 # Ejecutar migraciones y poblar datos iniciales

@@ -26,6 +26,7 @@
                                     <a href="{{ route('users.create') }}" class="block text-blue-600 hover:text-blue-800">
                                         Crear Usuario
                                     </a>
+                                    
                                 </div>
                             </div>
                         @endif

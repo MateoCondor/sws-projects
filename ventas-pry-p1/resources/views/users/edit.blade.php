@@ -76,10 +76,16 @@
                                    id="email" 
                                    value="{{ old('email', $user->email) }}" 
                                    required
+                                   pattern="[a-zA-Z0-9._%+-]+@barespe\.com"
+                                   placeholder="usuario@barespe.com"
                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             @error('email')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
+                            <p class="mt-1 text-sm text-gray-500">
+                                <i class="fas fa-info-circle"></i>
+                                Solo se permiten correos con dominio @barespe.com
+                            </p>
                         </div>
 
                         {{-- Contraseña (opcional) --}}
@@ -115,18 +121,43 @@
                             <label for="role" class="block text-sm font-medium text-gray-700">
                                 Rol
                             </label>
-                            <select name="role" 
-                                    id="role" 
-                                    required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Seleccionar rol</option>
-                                @foreach($availableRoles as $role)
-                                    <option value="{{ $role->name }}" 
-                                            {{ old('role', $currentRole) === $role->name ? 'selected' : '' }}>
-                                        {{ ucfirst($role->name) }}
+                            @php
+                                $isEditingSelf = $user->id === auth()->id();
+                            @endphp
+                            
+                            @if($isEditingSelf)
+                                {{-- Campo deshabilitado cuando se edita a sí mismo --}}
+                                <select name="role" 
+                                        id="role" 
+                                        required
+                                        disabled
+                                        class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm cursor-not-allowed">
+                                    <option value="{{ $currentRole }}" selected>
+                                        {{ ucfirst($currentRole) }}
                                     </option>
-                                @endforeach
-                            </select>
+                                </select>
+                                {{-- Campo oculto para enviar el valor actual --}}
+                                <input type="hidden" name="role" value="{{ $currentRole }}">
+                                <p class="mt-1 text-sm text-yellow-600">
+                                    <i class="fas fa-info-circle"></i>
+                                    No puedes cambiar tu propio rol por seguridad
+                                </p>
+                            @else
+                                {{-- Campo normal cuando se edita a otro usuario --}}
+                                <select name="role" 
+                                        id="role" 
+                                        required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Seleccionar rol</option>
+                                    @foreach($availableRoles as $role)
+                                        <option value="{{ $role->name }}" 
+                                                {{ old('role', $currentRole) === $role->name ? 'selected' : '' }}>
+                                            {{ ucfirst($role->name) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endif
+                            
                             @error('role')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -148,4 +179,35 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email');
+            
+            emailInput.addEventListener('input', function() {
+                const email = this.value;
+                const isValid = /^[a-zA-Z0-9._%+-]+@barespe\.com$/.test(email);
+                
+                if (email && !isValid) {
+                    this.setCustomValidity('El correo debe tener el dominio @barespe.com');
+                    this.classList.add('border-red-500');
+                    this.classList.remove('border-gray-300');
+                } else {
+                    this.setCustomValidity('');
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-gray-300');
+                }
+            });
+            
+            // Auto-completar dominio cuando el usuario escribe @
+            emailInput.addEventListener('keyup', function() {
+                const value = this.value;
+                if (value.endsWith('@') && !value.includes('@barespe.com')) {
+                    this.value = value + 'barespe.com';
+                    // Posicionar cursor antes del dominio
+                    const position = value.length;
+                    this.setSelectionRange(position, position);
+                }
+            });
+        });
+    </script>
 </x-app-layout>
